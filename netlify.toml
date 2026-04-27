@@ -1,17 +1,8 @@
 [build]
   command = "npm run build"
-  publish = "dist"
+  publish = "dist"  # Vite utilise "dist" par défaut
 
-# Routing SPA
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# Headers critiques pour Firebase Auth
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
-    Cross-Origin-Embedder-Policy = "unsafe-none"
-    Cross-Origin-Resource-Policy = "cross-origin"
