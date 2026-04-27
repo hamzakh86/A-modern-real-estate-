@@ -1,8 +1,23 @@
 [build]
   command = "npm run build"
-  publish = "dist"  # Vite utilise "dist" par défaut
+  publish = "dist"
 
+# Proxy vers votre backend Render pour les appels API
+[[redirects]]
+  from = "/api/*"
+  to = "https://a-modern-real-estate.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# Routing SPA - doit venir APRÈS la règle API
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Headers pour résoudre les problèmes COOP
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+    Cross-Origin-Embedder-Policy = "require-corp"
