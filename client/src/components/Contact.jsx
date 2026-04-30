@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 export default function Contact({ listing }) {
   const [landlord, setLandlord] = useState(null);
   const [message, setMessage] = useState('');
+
   const onChange = (e) => {
     setMessage(e.target.value);
   };
@@ -11,7 +12,8 @@ export default function Contact({ listing }) {
   useEffect(() => {
     const fetchLandlord = async () => {
       try {
-        const res = await fetch(`/api/user/${listing.userRef}`);
+        // ✅ corrigé
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/user/${listing.userRef}`);
         const data = await res.json();
         setLandlord(data);
       } catch (error) {
@@ -20,6 +22,7 @@ export default function Contact({ listing }) {
     };
     fetchLandlord();
   }, [listing.userRef]);
+
   return (
     <>
       {landlord && (
@@ -38,12 +41,11 @@ export default function Contact({ listing }) {
             placeholder='Enter your message here...'
             className='w-full border p-3 rounded-lg'
           ></textarea>
-
           <Link
-          to={`mailto:${landlord.email}?subject=Regarding ${listing.name}&body=${message}`}
-          className='bg-slate-700 text-white text-center p-3 uppercase rounded-lg hover:opacity-95'
+            to={`mailto:${landlord.email}?subject=Regarding ${listing.name}&body=${message}`}
+            className='bg-slate-700 text-white text-center p-3 uppercase rounded-lg hover:opacity-95'
           >
-            Send Message          
+            Send Message
           </Link>
         </div>
       )}
