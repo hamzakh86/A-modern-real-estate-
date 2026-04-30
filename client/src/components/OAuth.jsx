@@ -13,22 +13,18 @@ export default function OAuth() {
       const provider = new GoogleAuthProvider();
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
-
-      // ✅ Utilise la variable d'environnement
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/google`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           name: result.user.displayName,
           email: result.user.email,
           photo: result.user.photoURL,
         }),
       });
-
       const data = await res.json();
-      dispatch(signInSuccess(data));
+      dispatch(signInSuccess({ user: data.user, token: data.token })); // ✅
       navigate('/');
     } catch (error) {
       console.log('could not sign in with google', error);
