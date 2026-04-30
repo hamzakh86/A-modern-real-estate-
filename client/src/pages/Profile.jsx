@@ -21,7 +21,7 @@ import { Link } from 'react-router-dom';
 
 export default function Profile() {
   const fileRef = useRef(null);
-  const { currentUser, loading, error } = useSelector((state) => state.user);
+  const { currentUser, loading, error, token } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
@@ -67,8 +67,11 @@ export default function Profile() {
       dispatch(updateUserStart());
       const res = await fetch(`${import.meta.env.VITE_API_URL}/user/update/${currentUser._id}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // ✅
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        credentials: 'include',
         body: JSON.stringify(formData),
       });
       const data = await res.json();
@@ -88,7 +91,10 @@ export default function Profile() {
       dispatch(deleteUserStart());
       const res = await fetch(`${import.meta.env.VITE_API_URL}/user/delete/${currentUser._id}`, {
         method: 'DELETE',
-        credentials: 'include', // ✅
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        credentials: 'include',
       });
       const data = await res.json();
       if (data.success === false) {
@@ -105,7 +111,10 @@ export default function Profile() {
     try {
       dispatch(signOutUserStart());
       const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/signout`, {
-        credentials: 'include', // ✅
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        credentials: 'include',
       });
       const data = await res.json();
       if (data.success === false) {
@@ -122,7 +131,10 @@ export default function Profile() {
     try {
       setShowListingsError(false);
       const res = await fetch(`${import.meta.env.VITE_API_URL}/user/listings/${currentUser._id}`, {
-        credentials: 'include', // ✅
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        credentials: 'include',
       });
       const data = await res.json();
       if (data.success === false) {
@@ -139,7 +151,10 @@ export default function Profile() {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/listing/delete/${listingId}`, {
         method: 'DELETE',
-        credentials: 'include', // ✅
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        credentials: 'include',
       });
       const data = await res.json();
       if (data.success === false) {
