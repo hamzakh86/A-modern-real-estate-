@@ -4,6 +4,7 @@ const initialState = {
   currentUser: null,
   error: null,
   loading: false,
+  token: null, // ✅ ajouté
 };
 
 const userSlice = createSlice({
@@ -14,7 +15,8 @@ const userSlice = createSlice({
       state.loading = true;
     },
     signInSuccess: (state, action) => {
-      state.currentUser = action.payload;
+      state.currentUser = action.payload.user; // ✅ modifié
+      state.token = action.payload.token;       // ✅ ajouté
       state.loading = false;
       state.error = null;
     },
@@ -26,7 +28,8 @@ const userSlice = createSlice({
       state.loading = true;
     },
     updateUserSuccess: (state, action) => {
-      state.currentUser = action.payload;
+      state.currentUser = action.payload.user; // ✅ modifié
+      state.token = action.payload.token;       // ✅ ajouté
       state.loading = false;
       state.error = null;
     },
@@ -39,6 +42,7 @@ const userSlice = createSlice({
     },
     deleteUserSuccess: (state) => {
       state.currentUser = null;
+      state.token = null; // ✅ ajouté
       state.loading = false;
       state.error = null;
     },
@@ -51,6 +55,7 @@ const userSlice = createSlice({
     },
     signOutUserSuccess: (state) => {
       state.currentUser = null;
+      state.token = null; // ✅ ajouté
       state.loading = false;
       state.error = null;
     },
