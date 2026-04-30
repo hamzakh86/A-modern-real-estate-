@@ -7,14 +7,15 @@ import { useNavigate } from 'react-router-dom';
 export default function OAuth() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const handleGoogleClick = async () => {
     try {
       const provider = new GoogleAuthProvider();
       const auth = getAuth(app);
-
       const result = await signInWithPopup(auth, provider);
 
-      const res = await fetch('/api/auth/google', {
+      // ✅ Utilise la variable d'environnement
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/google`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,6 +26,7 @@ export default function OAuth() {
           photo: result.user.photoURL,
         }),
       });
+
       const data = await res.json();
       dispatch(signInSuccess(data));
       navigate('/');
@@ -32,6 +34,7 @@ export default function OAuth() {
       console.log('could not sign in with google', error);
     }
   };
+
   return (
     <button
       onClick={handleGoogleClick}
