@@ -6,24 +6,18 @@ import authRouter from './routes/auth.route.js';
 import listingRouter from './routes/listing.route.js';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import cors from 'cors'; // ✅ Ajoute cet import
 
 dotenv.config();
 
-// Support des différents noms de variable
 const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.MONGO;
-
 if (!mongoURI) {
   console.error('❌ ERREUR: Aucune URI MongoDB trouvée dans .env');
-  console.error('Ajoutez MONGO, MONGODB_URI ou MONGO_URI dans votre fichier .env');
   process.exit(1);
 }
 
-console.log('🔍 Tentative de connexion à MongoDB...');
-
 mongoose.connect(mongoURI)
-  .then(() => {
-    console.log('✅ Connected to MongoDB successfully!');
-  })
+  .then(() => console.log('✅ Connected to MongoDB successfully!'))
   .catch((err) => {
     console.error('❌ MongoDB connection error:', err.message);
     process.exit(1);
@@ -31,6 +25,14 @@ mongoose.connect(mongoURI)
 
 const __dirname = path.resolve();
 const app = express();
+
+// ✅ CORS avant tout le reste
+app.use(cors({
+  origin: 'https://hamzaestate.netlify.app',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -40,27 +42,18 @@ app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/listing', listingRouter);
 
-// Serveur des fichiers statiques (production)
+// Fichiers statiques
 app.use(express.static(path.join(__dirname, '/client/dist')));
-
-// Route pour SPA (Single Page Application)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
 });
 
-// Gestion globale des erreurs
+// Gestion des erreurs
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
-  return res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message,
-  });
+  return res.status(statusCode).json({ success: false, statusCode, message });
 });
 
-// Démarrage du serveur
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}!`);
-});
+app.listen(PORT, () => console.log(`🚀 Server is running on port ${PORT}!`));
