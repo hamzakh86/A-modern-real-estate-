@@ -16,8 +16,6 @@ import {
 } from 'react-icons/fa';
 import Contact from '../components/Contact';
 
-// https://sabe.io/blog/javascript-format-numbers-commas#:~:text=The%20best%20way%20to%20format,format%20the%20number%20with%20commas.
-
 export default function Listing() {
   SwiperCore.use([Navigation]);
   const [listing, setListing] = useState(null);
@@ -32,7 +30,8 @@ export default function Listing() {
     const fetchListing = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/listing/get/${params.listingId}`);
+        // ✅ corrigé
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/listing/get/${params.listingId}`);
         const data = await res.json();
         if (data.success === false) {
           setError(true);
@@ -96,7 +95,7 @@ export default function Listing() {
                 : listing.regularPrice.toLocaleString('en-US')}
               {listing.type === 'rent' && ' / month'}
             </p>
-            <p className='flex items-center mt-6 gap-2 text-slate-600  text-sm'>
+            <p className='flex items-center mt-6 gap-2 text-slate-600 text-sm'>
               <FaMapMarkerAlt className='text-green-700' />
               {listing.address}
             </p>
@@ -115,23 +114,19 @@ export default function Listing() {
               {listing.description}
             </p>
             <ul className='text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6'>
-              <li className='flex items-center gap-1 whitespace-nowrap '>
+              <li className='flex items-center gap-1 whitespace-nowrap'>
                 <FaBed className='text-lg' />
-                {listing.bedrooms > 1
-                  ? `${listing.bedrooms} beds `
-                  : `${listing.bedrooms} bed `}
+                {listing.bedrooms > 1 ? `${listing.bedrooms} beds ` : `${listing.bedrooms} bed `}
               </li>
-              <li className='flex items-center gap-1 whitespace-nowrap '>
+              <li className='flex items-center gap-1 whitespace-nowrap'>
                 <FaBath className='text-lg' />
-                {listing.bathrooms > 1
-                  ? `${listing.bathrooms} baths `
-                  : `${listing.bathrooms} bath `}
+                {listing.bathrooms > 1 ? `${listing.bathrooms} baths ` : `${listing.bathrooms} bath `}
               </li>
-              <li className='flex items-center gap-1 whitespace-nowrap '>
+              <li className='flex items-center gap-1 whitespace-nowrap'>
                 <FaParking className='text-lg' />
                 {listing.parking ? 'Parking spot' : 'No Parking'}
               </li>
-              <li className='flex items-center gap-1 whitespace-nowrap '>
+              <li className='flex items-center gap-1 whitespace-nowrap'>
                 <FaChair className='text-lg' />
                 {listing.furnished ? 'Furnished' : 'Unfurnished'}
               </li>
