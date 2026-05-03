@@ -1,13 +1,7 @@
 import { useEffect, useState } from 'react';
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
-import { app } from '../firebase';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+
 
 export default function UpdateListing() {
   const { currentUser } = useSelector((state) => state.user);
@@ -75,25 +69,28 @@ export default function UpdateListing() {
 
   const storeImage = async (file) => {
     return new Promise((resolve, reject) => {
-      const storage = getStorage(app);
-      const fileName = new Date().getTime() + file.name;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`Upload is ${progress}% done`);
-        },
-        (error) => { reject(error); },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            resolve(downloadURL);
-          });
-        }
-      );
+      const data = new FormData();
+      data.append('file', file);
+      data.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+      data.append('cloud_name', import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
+
+      fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`, {
+
+        method: 'POST',
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.secure_url) {
+            resolve(data.secure_url);
+          } else {
+            reject(new Error('Upload failed'));
+          }
+        })
+        .catch((err) => reject(err));
     });
   };
+
 
   const handleRemoveImage = (index) => {
     setFormData({

@@ -1,4 +1,9 @@
 import express from 'express';
+import dns from 'node:dns';
+
+// Force DNS resolution to use public servers (fixes querySrv ECONNREFUSED on some networks/Windows)
+dns.setServers(['1.1.1.1', '8.8.8.8']);
+
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import userRouter from './routes/user.route.js';
@@ -27,12 +32,21 @@ const __dirname = path.resolve();
 const app = express();
 
 // ✅ CORS avant tout le reste
+// ✅ Configuration CORS pour autoriser le local et la prod
+const allowedOrigins = ['https://hamzaestate.netlify.app', 'http://localhost:5173'];
 app.use(cors({
-  origin: 'https://hamzaestate.netlify.app',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
 
 app.use(express.json());
 app.use(cookieParser());
