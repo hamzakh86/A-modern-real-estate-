@@ -50,10 +50,10 @@ export default function Listing() {
   }, [params.listingId]);
 
   return (
-    <main>
-      {loading && <p className='text-center my-7 text-2xl'>Loading...</p>}
+    <main style={{ background: 'var(--surface)', minHeight: '100vh', paddingTop: '72px' }}>
+      {loading && <p className='text-center my-12 text-2xl text-[var(--primary-light)] animate-pulse'>Chargement...</p>}
       {error && (
-        <p className='text-center my-7 text-2xl'>Something went wrong!</p>
+        <p className='text-center my-12 text-2xl text-red-500'>Une erreur est survenue !</p>
       )}
       {listing && !loading && !error && (
         <div>
@@ -61,18 +61,22 @@ export default function Listing() {
             {listing.imageUrls.map((url) => (
               <SwiperSlide key={url}>
                 <div
-                  className='h-[550px]'
+                  className='h-[400px] md:h-[600px] relative'
                   style={{
                     background: `url(${url}) center no-repeat`,
                     backgroundSize: 'cover',
                   }}
-                ></div>
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--surface)] to-transparent opacity-90"></div>
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>
-          <div className='fixed top-[13%] right-[3%] z-10 border rounded-full w-12 h-12 flex justify-center items-center bg-slate-100 cursor-pointer'>
+          
+          <div className='fixed top-[15%] right-[5%] z-10 w-12 h-12 flex justify-center items-center cursor-pointer transition-all duration-300 hover:scale-110'
+            style={{ background: 'var(--glass)', border: '1px solid var(--glass-border)', backdropFilter: 'blur(10px)', borderRadius: '50%' }}>
             <FaShare
-              className='text-slate-500'
+              className='text-[var(--primary-light)]'
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
                 setCopied(true);
@@ -83,63 +87,78 @@ export default function Listing() {
             />
           </div>
           {copied && (
-            <p className='fixed top-[23%] right-[5%] z-10 rounded-md bg-slate-100 p-2'>
-              Link copied!
+            <p className='fixed top-[23%] right-[5%] z-10 p-2 text-sm font-semibold'
+              style={{ background: 'var(--primary)', color: '#fff', borderRadius: '8px', boxShadow: '0 4px 12px rgba(79,70,229,0.3)' }}>
+              Lien copié !
             </p>
           )}
-          <div className='flex flex-col max-w-4xl mx-auto p-3 my-7 gap-4'>
-            <p className='text-2xl font-semibold'>
-              {listing.name} - ${' '}
-              {listing.offer
-                ? listing.discountPrice.toLocaleString('en-US')
-                : listing.regularPrice.toLocaleString('en-US')}
-              {listing.type === 'rent' && ' / month'}
-            </p>
-            <p className='flex items-center mt-6 gap-2 text-slate-600 text-sm'>
-              <FaMapMarkerAlt className='text-green-700' />
+          
+          <div className='flex flex-col max-w-5xl mx-auto p-6 md:p-10 my-[-80px] md:my-[-120px] gap-6 relative z-10 glass-card' style={{ marginBottom: '60px' }}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <h1 className='text-3xl md:text-4xl font-extrabold text-[var(--text-primary)]'>
+                {listing.name}
+              </h1>
+              <div className="text-2xl font-bold gradient-text">
+                {listing.offer
+                  ? listing.discountPrice.toLocaleString('fr-FR')
+                  : listing.regularPrice.toLocaleString('fr-FR')} €
+                {listing.type === 'rent' && <span className="text-sm font-medium text-[var(--text-secondary)]"> / mois</span>}
+              </div>
+            </div>
+
+            <p className='flex items-center gap-2 text-[var(--text-secondary)] text-sm font-medium'>
+              <FaMapMarkerAlt className='text-[var(--primary-light)] text-lg' />
               {listing.address}
             </p>
-            <div className='flex gap-4'>
-              <p className='bg-red-900 w-full max-w-[200px] text-white text-center p-1 rounded-md'>
-                {listing.type === 'rent' ? 'For Rent' : 'For Sale'}
-              </p>
+
+            <div className='flex gap-4 mt-2'>
+              <span className='px-4 py-1 rounded-full text-sm font-semibold'
+                style={{ background: listing.type === 'rent' ? 'rgba(52,211,153,0.15)' : 'rgba(129,140,248,0.15)', color: listing.type === 'rent' ? '#34d399' : '#818cf8', border: `1px solid ${listing.type === 'rent' ? 'rgba(52,211,153,0.3)' : 'rgba(129,140,248,0.3)'}` }}>
+                {listing.type === 'rent' ? 'À louer' : 'À vendre'}
+              </span>
               {listing.offer && (
-                <p className='bg-green-900 w-full max-w-[200px] text-white text-center p-1 rounded-md'>
-                  ${+listing.regularPrice - +listing.discountPrice} OFF
-                </p>
+                <span className='px-4 py-1 rounded-full text-sm font-semibold'
+                  style={{ background: 'rgba(244,114,182,0.15)', color: '#f472b6', border: '1px solid rgba(244,114,182,0.3)' }}>
+                  Promo : -{+listing.regularPrice - +listing.discountPrice} €
+                </span>
               )}
             </div>
-            <p className='text-slate-800'>
-              <span className='font-semibold text-black'>Description - </span>
-              {listing.description}
-            </p>
-            <ul className='text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6'>
-              <li className='flex items-center gap-1 whitespace-nowrap'>
-                <FaBed className='text-lg' />
-                {listing.bedrooms > 1 ? `${listing.bedrooms} beds ` : `${listing.bedrooms} bed `}
+
+            <div className="mt-4">
+              <h3 className="text-lg font-bold text-[var(--primary-light)] mb-2 uppercase tracking-wider text-sm">Description</h3>
+              <p className='text-[var(--text-secondary)] leading-relaxed'>
+                {listing.description}
+              </p>
+            </div>
+
+            <ul className='flex flex-wrap items-center gap-4 sm:gap-6 mt-4 pb-6 border-b border-[rgba(255,255,255,0.08)]'>
+              <li className='flex items-center gap-2 text-[var(--text-primary)] font-semibold bg-[rgba(255,255,255,0.03)] px-4 py-2 rounded-xl border border-[rgba(255,255,255,0.05)]'>
+                <FaBed className='text-[var(--primary-light)] text-xl' />
+                {listing.bedrooms > 1 ? `${listing.bedrooms} Chambres` : `${listing.bedrooms} Chambre`}
               </li>
-              <li className='flex items-center gap-1 whitespace-nowrap'>
-                <FaBath className='text-lg' />
-                {listing.bathrooms > 1 ? `${listing.bathrooms} baths ` : `${listing.bathrooms} bath `}
+              <li className='flex items-center gap-2 text-[var(--text-primary)] font-semibold bg-[rgba(255,255,255,0.03)] px-4 py-2 rounded-xl border border-[rgba(255,255,255,0.05)]'>
+                <FaBath className='text-[var(--primary-light)] text-xl' />
+                {listing.bathrooms > 1 ? `${listing.bathrooms} Salles de bain` : `${listing.bathrooms} Salle de bain`}
               </li>
-              <li className='flex items-center gap-1 whitespace-nowrap'>
-                <FaParking className='text-lg' />
-                {listing.parking ? 'Parking spot' : 'No Parking'}
+              <li className='flex items-center gap-2 text-[var(--text-primary)] font-semibold bg-[rgba(255,255,255,0.03)] px-4 py-2 rounded-xl border border-[rgba(255,255,255,0.05)]'>
+                <FaParking className='text-[var(--primary-light)] text-xl' />
+                {listing.parking ? 'Parking' : 'Sans parking'}
               </li>
-              <li className='flex items-center gap-1 whitespace-nowrap'>
-                <FaChair className='text-lg' />
-                {listing.furnished ? 'Furnished' : 'Unfurnished'}
+              <li className='flex items-center gap-2 text-[var(--text-primary)] font-semibold bg-[rgba(255,255,255,0.03)] px-4 py-2 rounded-xl border border-[rgba(255,255,255,0.05)]'>
+                <FaChair className='text-[var(--primary-light)] text-xl' />
+                {listing.furnished ? 'Meublé' : 'Non meublé'}
               </li>
             </ul>
+
             {currentUser && listing.userRef !== currentUser._id && !contact && (
               <button
                 onClick={() => setContact(true)}
-                className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3'
+                className='btn-primary mt-4 py-4 w-full md:w-auto self-start'
               >
-                Contact landlord
+                Contacter le propriétaire
               </button>
             )}
-            {contact && <Contact listing={listing} />}
+            {contact && <div className="mt-4"><Contact listing={listing} /></div>}
           </div>
         </div>
       )}

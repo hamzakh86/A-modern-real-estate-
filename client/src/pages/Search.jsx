@@ -129,83 +129,101 @@ export default function Search() {
   };
 
   return (
-    <div className='flex flex-col md:flex-row'>
-      <div className='p-7 border-b-2 md:border-r-2 md:min-h-screen'>
+    <div className='flex flex-col md:flex-row' style={{ background: 'var(--surface)', minHeight: '100vh', paddingTop: '72px' }}>
+      {/* Sidebar */}
+      <div className='p-7 md:w-[320px] md:min-h-screen' style={{ background: 'var(--surface-2)', borderRight: '1px solid var(--glass-border)' }}>
         <form onSubmit={handleSubmit} className='flex flex-col gap-8'>
-          <div className='flex items-center gap-2'>
-            <label className='whitespace-nowrap font-semibold'>
-              Search Term:
+          
+          <div className='flex flex-col gap-3'>
+            <label className='font-semibold text-[var(--text-secondary)] uppercase tracking-wider text-xs'>
+              Recherche
             </label>
             <input
               type='text'
               id='searchTerm'
-              placeholder='Search...'
-              className='border rounded-lg p-3 w-full'
+              placeholder='Rechercher...'
+              className='w-full rounded-lg p-3 outline-none transition-all duration-300'
+              style={{ background: 'var(--glass)', border: '1px solid var(--glass-border)', color: 'var(--text-primary)' }}
+              onFocus={(e) => { e.target.style.borderColor = 'rgba(129,140,248,0.5)'; e.target.style.background = 'rgba(79,70,229,0.08)' }}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--glass-border)'; e.target.style.background = 'var(--glass)' }}
               value={sidebardata.searchTerm}
               onChange={handleChange}
             />
           </div>
-          <div className='flex gap-2 flex-wrap items-center'>
-            <label className='font-semibold'>Type:</label>
-            <div className='flex gap-2'>
-              <input type='checkbox' id='all' className='w-5' onChange={handleChange} checked={sidebardata.type === 'all'} />
-              <span>Rent & Sale</span>
-            </div>
-            <div className='flex gap-2'>
-              <input type='checkbox' id='rent' className='w-5' onChange={handleChange} checked={sidebardata.type === 'rent'} />
-              <span>Rent</span>
-            </div>
-            <div className='flex gap-2'>
-              <input type='checkbox' id='sale' className='w-5' onChange={handleChange} checked={sidebardata.type === 'sale'} />
-              <span>Sale</span>
-            </div>
-            <div className='flex gap-2'>
-              <input type='checkbox' id='offer' className='w-5' onChange={handleChange} checked={sidebardata.offer} />
-              <span>Offer</span>
-            </div>
-          </div>
-          <div className='flex gap-2 flex-wrap items-center'>
-            <label className='font-semibold'>Amenities:</label>
-            <div className='flex gap-2'>
-              <input type='checkbox' id='parking' className='w-5' onChange={handleChange} checked={sidebardata.parking} />
-              <span>Parking</span>
-            </div>
-            <div className='flex gap-2'>
-              <input type='checkbox' id='furnished' className='w-5' onChange={handleChange} checked={sidebardata.furnished} />
-              <span>Furnished</span>
+
+          <div className='flex flex-col gap-3'>
+            <label className='font-semibold text-[var(--text-secondary)] uppercase tracking-wider text-xs'>Type d'annonce</label>
+            <div className='flex flex-wrap gap-3'>
+              <label className='flex items-center gap-2 cursor-pointer text-[var(--text-primary)] text-sm font-medium'>
+                <input type='checkbox' id='all' className='w-4 h-4 accent-[#818cf8]' onChange={handleChange} checked={sidebardata.type === 'all'} />
+                Tous
+              </label>
+              <label className='flex items-center gap-2 cursor-pointer text-[var(--text-primary)] text-sm font-medium'>
+                <input type='checkbox' id='rent' className='w-4 h-4 accent-[#818cf8]' onChange={handleChange} checked={sidebardata.type === 'rent'} />
+                Location
+              </label>
+              <label className='flex items-center gap-2 cursor-pointer text-[var(--text-primary)] text-sm font-medium'>
+                <input type='checkbox' id='sale' className='w-4 h-4 accent-[#818cf8]' onChange={handleChange} checked={sidebardata.type === 'sale'} />
+                Vente
+              </label>
+              <label className='flex items-center gap-2 cursor-pointer text-[var(--text-primary)] text-sm font-medium'>
+                <input type='checkbox' id='offer' className='w-4 h-4 accent-[#818cf8]' onChange={handleChange} checked={sidebardata.offer} />
+                Offre spéciale
+              </label>
             </div>
           </div>
-          <div className='flex items-center gap-2'>
-            <label className='font-semibold'>Sort:</label>
+
+          <div className='flex flex-col gap-3'>
+            <label className='font-semibold text-[var(--text-secondary)] uppercase tracking-wider text-xs'>Équipements</label>
+            <div className='flex flex-wrap gap-4'>
+              <label className='flex items-center gap-2 cursor-pointer text-[var(--text-primary)] text-sm font-medium'>
+                <input type='checkbox' id='parking' className='w-4 h-4 accent-[#818cf8]' onChange={handleChange} checked={sidebardata.parking} />
+                Parking
+              </label>
+              <label className='flex items-center gap-2 cursor-pointer text-[var(--text-primary)] text-sm font-medium'>
+                <input type='checkbox' id='furnished' className='w-4 h-4 accent-[#818cf8]' onChange={handleChange} checked={sidebardata.furnished} />
+                Meublé
+              </label>
+            </div>
+          </div>
+
+          <div className='flex flex-col gap-3'>
+            <label className='font-semibold text-[var(--text-secondary)] uppercase tracking-wider text-xs'>Trier par</label>
             <select
               onChange={handleChange}
               defaultValue={'created_at_desc'}
               id='sort_order'
-              className='border rounded-lg p-3'
+              className='w-full rounded-lg p-3 outline-none transition-all duration-300 cursor-pointer'
+              style={{ background: 'var(--glass)', border: '1px solid var(--glass-border)', color: 'var(--text-primary)' }}
             >
-              <option value='regularPrice_desc'>Price high to low</option>
-              <option value='regularPrice_asc'>Price low to hight</option>
-              <option value='createdAt_desc'>Latest</option>
-              <option value='createdAt_asc'>Oldest</option>
+              <option value='regularPrice_desc' className='bg-[#1a1828] text-white'>Prix décroissant</option>
+              <option value='regularPrice_asc' className='bg-[#1a1828] text-white'>Prix croissant</option>
+              <option value='createdAt_desc' className='bg-[#1a1828] text-white'>Plus récent</option>
+              <option value='createdAt_asc' className='bg-[#1a1828] text-white'>Plus ancien</option>
             </select>
           </div>
-          <button className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95'>
-            Search
+
+          <button className='btn-primary w-full mt-4 py-4 text-base tracking-wide'>
+            Rechercher
           </button>
         </form>
       </div>
+      
+      {/* Results */}
       <div className='flex-1'>
-        <h1 className='text-3xl font-semibold border-b p-3 text-slate-700 mt-5'>
-          Listing results:
+        <h1 className='text-3xl font-bold p-7 mt-5 text-[var(--text-primary)]' style={{ borderBottom: '1px solid var(--glass-border)' }}>
+          Résultats de recherche :
         </h1>
-        <div className='p-7 flex flex-wrap gap-4'>
+        <div className='p-7 flex flex-wrap gap-6'>
           {!loading && listings.length === 0 && (
-            <p className='text-xl text-slate-700'>No listing found!</p>
+            <div className='w-full text-center py-12'>
+              <p className='text-xl text-[var(--text-muted)]'>Aucune annonce trouvée avec ces critères.</p>
+            </div>
           )}
           {loading && (
-            <p className='text-xl text-slate-700 text-center w-full'>
-              Loading...
-            </p>
+            <div className='w-full text-center py-12'>
+              <p className='text-xl text-[var(--primary-light)] font-medium animate-pulse'>Chargement des résultats...</p>
+            </div>
           )}
           {!loading &&
             listings &&
@@ -213,12 +231,14 @@ export default function Search() {
               <ListingItem key={listing._id} listing={listing} />
             ))}
           {showMore && (
-            <button
-              onClick={onShowMoreClick}
-              className='text-green-700 hover:underline p-7 text-center w-full'
-            >
-              Show more
-            </button>
+            <div className='w-full flex justify-center mt-8'>
+              <button
+                onClick={onShowMoreClick}
+                className='btn-outline'
+              >
+                Afficher plus de résultats
+              </button>
+            </div>
           )}
         </div>
       </div>
