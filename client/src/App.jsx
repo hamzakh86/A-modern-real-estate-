@@ -13,7 +13,7 @@ import Search from './pages/Search';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Header />
       <Routes>
         <Route path='/' element={<Home />} />
@@ -26,10 +26,7 @@ export default function App() {
         <Route element={<PrivateRoute />}>
           <Route path='/profile' element={<Profile />} />
           <Route path='/create-listing' element={<CreateListing />} />
-          <Route
-            path='/update-listing/:listingId'
-            element={<UpdateListing />}
-          />
+          <Route path='/update-listing/:listingId' element={<UpdateListing />} />
         </Route>
       </Routes>
     </BrowserRouter>

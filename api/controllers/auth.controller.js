@@ -3,10 +3,13 @@ import bcryptjs from 'bcryptjs';
 import { errorHandler } from '../utils/error.js';
 import jwt from 'jsonwebtoken';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const cookieOptions = {
   httpOnly: true,
-  secure: true,
-  sameSite: 'none',
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'lax',
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
 };
 
 export const signup = async (req, res, next) => {
@@ -77,7 +80,8 @@ export const google = async (req, res, next) => {
 
 export const signOut = async (req, res, next) => {
   try {
-    res.clearCookie('access_token', cookieOptions);
+    const clearOptions = { httpOnly: true, secure: isProduction, sameSite: isProduction ? 'none' : 'lax' };
+    res.clearCookie('access_token', clearOptions);
     res.status(200).json('User has been logged out!');
   } catch (error) {
     next(error);

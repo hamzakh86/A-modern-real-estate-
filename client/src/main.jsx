@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
+import App from './App';  // ✅ import du composant App
 import './index.css';
 import { persistor, store } from './redux/store.js';
 import { Provider } from 'react-redux';

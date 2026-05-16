@@ -11,7 +11,7 @@ import authRouter from './routes/auth.route.js';
 import listingRouter from './routes/listing.route.js';
 import cookieParser from 'cookie-parser';
 import path from 'path';
-import cors from 'cors'; // ✅ Ajoute cet import
+import cors from 'cors';
 
 dotenv.config();
 
@@ -31,8 +31,7 @@ mongoose.connect(mongoURI)
 const __dirname = path.resolve();
 const app = express();
 
-// ✅ CORS avant tout le reste
-// ✅ Configuration CORS pour autoriser le local et la prod
+// CORS configuration
 const allowedOrigins = ['https://hamzaestate.netlify.app', 'http://localhost:5173'];
 app.use(cors({
   origin: function (origin, callback) {
@@ -47,7 +46,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-
 app.use(express.json());
 app.use(cookieParser());
 
@@ -56,11 +54,16 @@ app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/listing', listingRouter);
 
-// Fichiers statiques
-app.use(express.static(path.join(__dirname, '/client/dist')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
-});
+// ⚠️ Servir les fichiers statiques UNIQUEMENT en production
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.join(__dirname, 'client', 'dist');
+  app.use(express.static(distPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else {
+  console.log('📍 Développement : frontend sur http://localhost:5173 (proxy actif)');
+}
 
 // Gestion des erreurs
 app.use((err, req, res, next) => {
